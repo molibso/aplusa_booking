@@ -24,26 +24,28 @@ const Contact = () => {
     salutation: "",
     first_name: "",
     last_name: "",
-    street: "",
-    housenumber: "",
-    zip_code: "",
-    city:"",
     email: "",
     birthday: "",
     company_name: "",
-    company: "",
-    interest: "",
   });
 
   const [captchaToken, setCaptchaToken] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [step, setStep] = useState(1);
-  const eventDate1Str = process.env.NEXT_PUBLIC_EVENT_DATE_1 || "2025-10-24";
-  const eventDate2Str = process.env.NEXT_PUBLIC_EVENT_DATE_2 || "2025-10-25";
-  const eventName1 = process.env.NEXT_PUBLIC_EVENT_NAME_1 || "OST1";
-  const eventName2 = process.env.NEXT_PUBLIC_EVENT_NAME_2 || "OST2";
+  const eventDate1Str = process.env.NEXT_PUBLIC_EVENT_DATE_1 || "2025-11-04";
+  const eventDate2Str = process.env.NEXT_PUBLIC_EVENT_DATE_2 || "2025-11-05";
+  const eventDate3Str = process.env.NEXT_PUBLIC_EVENT_DATE_3 || "2025-11-06";
+  const eventDate4Str = process.env.NEXT_PUBLIC_EVENT_DATE_4 || "2025-11-07";
+
+  const eventName1 = process.env.NEXT_PUBLIC_EVENT_NAME_1 || "aplusa1";
+  const eventName2 = process.env.NEXT_PUBLIC_EVENT_NAME_2 || "aplusa2";
+  const eventName3 = process.env.NEXT_PUBLIC_EVENT_NAME_3 || "aplusa3";
+  const eventName4 = process.env.NEXT_PUBLIC_EVENT_NAME_4 || "aplusa4";
+
   const eventDate1 = dayjs(eventDate1Str);
   const eventDate2 = dayjs(eventDate2Str);
+  const eventDate3 = dayjs(eventDate3Str);
+  const eventDate4 = dayjs(eventDate4Str);
   const [selectedDate, setSelectedDate] = useState(eventDate1);
   const [selectedAppointment, setSelectedAppointment] = useState<string | null>(null);
   const [appointments, setAppointments] = useState<Record<string, string[]>>({});
@@ -58,8 +60,16 @@ const Contact = () => {
 
   useEffect(() => {
     if (!hasMounted) return;
-    const isFirstDay = selectedDate.isSame(eventDate1, "day");
-    const eventName = isFirstDay ? eventName1 : eventName2;
+    let eventName = eventName1;
+    if (selectedDate.isSame(eventDate1, "day")) {
+      eventName = eventName1;
+    } else if (selectedDate.isSame(eventDate2, "day")) {
+      eventName = eventName2;
+    } else if (selectedDate.isSame(eventDate3, "day")) {
+      eventName = eventName3;
+    } else if (selectedDate.isSame(eventDate4, "day")) {
+      eventName = eventName4;
+    }
 
     const fetchAppointments = async () => {
       try {
@@ -87,7 +97,7 @@ const Contact = () => {
     };
 
     fetchAppointments();
-  }, [selectedDate, hasMounted, eventDate1Str, eventDate2Str, eventName1, eventName2]);
+  }, [selectedDate, hasMounted, eventDate1Str, eventDate2Str, eventDate3Str, eventDate4Str, eventName1, eventName2, eventName3, eventName4]);
 
   if (!hasMounted) {
     return null;
@@ -123,10 +133,7 @@ const Contact = () => {
     if (
       !formData.first_name ||
       !formData.last_name ||
-      !formData.email ||
-      !formData.street ||
-      !formData.housenumber ||
-      !formData.zip_code
+      !formData.email
     ) {
       alert("Please fill in all required fields.");
       return;
@@ -134,11 +141,11 @@ const Contact = () => {
 
     setIsSubmitting(true);
 
-    const apiUrl2 = `${process.env.NEXT_PUBLIC_BUNERT_URL}?s=${process.env.NEXT_PUBLIC_SYSTEM_TOKEN_TWO}`;
+    const apiUrl2 = `${process.env.NEXT_PUBLIC_BASE_URL}?s=${process.env.NEXT_PUBLIC_SYSTEM_TOKEN}`;
 
     try {
       // Create a copy of formData and exclude the specified fields for BUNERT
-      const { salutation, company_name, company, interest, ...filteredFormData } = formData;
+      const { salutation, company_name, ...filteredFormData } = formData;
       
       // Prepare data for both APIs
       const bunertData = { ...filteredFormData, captchaToken };
@@ -148,13 +155,9 @@ const Contact = () => {
         firstName: formData.first_name,
         lastName: formData.last_name,
         email: formData.email,
-        ort: formData.city,
-        plz: formData.zip_code,
         time: selectedAppointment,
         bookingDate: selectedDate?.format("YYYY-MM-DD"),
         company_name: formData.company_name,
-        company: formData.company,
-        interest: formData.interest,
         salutation: formData.salutation,
         captchaToken: captchaToken
       };
@@ -229,15 +232,9 @@ const Contact = () => {
       salutation: "",
       first_name: "",
       last_name: "",
-      street: "",
-      housenumber: "",
-      zip_code: "",
-      city:"",
       email: "",
       birthday: "",
       company_name: "",
-      company: "",
-      interest: "",
     });
     setCheckbox1(false);
     setCheckbox2(false);
@@ -443,145 +440,24 @@ const Contact = () => {
                     />
                   </div>
 
-                  <div className="mb-7.5 flex flex-col gap-7.5 lg:flex-row lg:justify-between lg:gap-14">
-                    <div className="w-full">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-white">
-                        Firmenname <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="company_name"
-                        placeholder="Firmenname"
-                        value={formData.company_name}
-                        onChange={handleInputChange}
-                        className={`w-full border-b border-stroke bg-transparent pb-3.5 ${
-                          !formData.company_name && "border-red-500"
-                        }`}
-                        required
-                      />
-                    </div>
-                    <div className="w-full">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-white">
-                        Unternehmen <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="company"
-                        placeholder="Unternehmen"
-                        value={formData.company}
-                        onChange={handleInputChange}
-                        className={`w-full border-b border-stroke bg-transparent pb-3.5 ${
-                          !formData.company && "border-red-500"
-                        }`}
-                        required
-                      />
-                    </div>
-                  </div>
-
                   <div className="mb-7.5">
                     <label className="block text-sm font-medium text-gray-700 dark:text-white">
-                      Interesse <span className="text-red-500">*</span>
+                      Firmenname <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      name="interest"
-                      placeholder="Interesse"
-                      value={formData.interest}
+                      name="company_name"
+                      placeholder="Firmenname"
+                      value={formData.company_name}
                       onChange={handleInputChange}
                       className={`w-full border-b border-stroke bg-transparent pb-3.5 ${
-                        !formData.interest && "border-red-500"
+                        !formData.company_name && "border-red-500"
                       }`}
                       required
                     />
                   </div>
 
-                  <div className="mb-7.5 flex flex-col gap-7.5 lg:flex-row lg:justify-between lg:gap-14">
-                    <div className="w-full">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-white">
-                        Straße <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="street"
-                        placeholder="Straße"
-                        value={formData.street}
-                        onChange={handleInputChange}
-                        className={`w-full border-b border-stroke bg-transparent pb-3.5 ${
-                          !formData.street && "border-red-500"
-                        }`}
-                        required
-                      />
-                    </div>
-
-                    <div className="w-full">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-white">
-                        Hausnummer <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="housenumber"
-                        placeholder="Hausnummer"
-                        value={formData.housenumber}
-                        onChange={handleInputChange}
-                        className={`w-full border-b border-stroke bg-transparent pb-3.5 ${
-                          !formData.housenumber && "border-red-500"
-                        }`}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mb-7.5 flex flex-col gap-7.5 lg:flex-row lg:justify-between lg:gap-14">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-white">
-                        PLZ <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="zip_code"
-                        placeholder="PLZ"
-                        value={formData.zip_code}
-                        onChange={handleInputChange}
-                        className={`w-full border-b border-stroke bg-transparent pb-3.5 ${
-                          !formData.zip_code && "border-red-500"
-                        }`}
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-white">
-                        Ort <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        placeholder="Ort"
-                        value={formData.city}
-                        onChange={handleInputChange}
-                        className={`w-full border-b border-stroke bg-transparent pb-3.5 ${
-                          !formData.zip_code && "border-red-500"
-                        }`}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div
-                    className="mb-11.5 flex"
-                    style={{ display: "flex", flexDirection: "column" }}
-                  >
-                    <label>Geburtsdatum:</label>
-                    <div>
-                      <input
-                        type="date"
-                        name="birthday"
-                        placeholder="Birthday"
-                        value={formData.birthday}
-                        onChange={handleInputChange}
-                        className="w-full border-b border-stroke bg-transparent pb-3.5"
-                      />
-                    </div>
-                  </div>
+             
 
                   <div className="flex justify-end">
                     <button
@@ -613,7 +489,12 @@ const Contact = () => {
                           value={selectedDate}
                           onChange={(date) => {
                             if (!date) return;
-                            if (date.isSame(eventDate1, "day") || date.isSame(eventDate2, "day")) {
+                            if (
+                              date.isSame(eventDate1, "day") ||
+                              date.isSame(eventDate2, "day") ||
+                              date.isSame(eventDate3, "day") ||
+                              date.isSame(eventDate4, "day")
+                            ) {
                               setSelectedDate(date);
                               setSelectedAppointment(null);
                             }
@@ -627,7 +508,12 @@ const Contact = () => {
                             },
                           }}
                           shouldDisableDate={(date) => {
-                            return !(date.isSame(eventDate1, "day") || date.isSame(eventDate2, "day"));
+                            return !(
+                              date.isSame(eventDate1, "day") ||
+                              date.isSame(eventDate2, "day") ||
+                              date.isSame(eventDate3, "day") ||
+                              date.isSame(eventDate4, "day")
+                            );
                           }}
                         />
                       </LocalizationProvider>

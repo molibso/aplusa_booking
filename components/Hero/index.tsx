@@ -14,9 +14,7 @@ const Hero = () => {
       <section className="overflow-hidden pb-20 pt-35 md:pt-40 xl:pb-25 xl:pt-46">
         <div className="mx-auto max-w-c-1390 px-4 md:px-8 2xl:px-0">
         <h1 className="w-full text-start py-4 text-4xl font-bold text-black dark:text-white  ">
-        Registrieren Sie sich für eine Ganganalyse auf der A+A Messe 
-an unserem Stand G16-04 (im Freigelände vor der Halle 16)
-
+        Registrieren Sie sich für eine Ganganalyse: Stand FG16-04
       </h1>
           <div className="flex flex-col lg:flex-row lg:items-center lg:gap-8 xl:gap-32.5 mt-6">
             <div className="w-full md:w-1/2">

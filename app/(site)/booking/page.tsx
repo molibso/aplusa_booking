@@ -28,7 +28,7 @@ const Bookings = () => {
       setLoading(true);
       setError(null);
 
-      const apiUrl = `${process.env.NEXT_PUBLIC_BUNERT_URL}?s=${process.env.NEXT_PUBLIC_SYSTEM_TOKEN}&page=${currentPage - 1}`;
+      const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL}?s=${process.env.NEXT_PUBLIC_SYSTEM_TOKEN}&page=${currentPage - 1}`;
       const authToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 
       try {
