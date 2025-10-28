@@ -144,7 +144,7 @@ const Contact = () => {
     const apiUrl2 = `${process.env.NEXT_PUBLIC_BASE_URL}?s=${process.env.NEXT_PUBLIC_SYSTEM_TOKEN}`;
 
     try {
-      // Create a copy of formData and exclude the specified fields for BUNERT
+      // Create a copy of formData and exclude the specified fields for aplusa
       const { salutation, company_name, ...filteredFormData } = formData;
       
       // Prepare data for both APIs
