@@ -45,10 +45,8 @@ const Modal = ({ isOpen, onClose }) => {
         </h2>
         <div className="mt-4 text-center text-l space-y-2">
           <p>Hallo,</p>
-          <p>vielen Dank für Ihre Anmeldung für eine Ganganalyse an unserem Stand auf der OST-Messe.</p>
-          <p>Sie erhalten Ihren Gutschein für ein Tagesticket der Messe innerhalb der nächsten 48 Stunden von uns per Mail zugeschickt.</p>
-          <p>Sollten Sie Fragen haben, schreiben Sie gerne eine Mail an <a href="mailto:marketing@molibso.com" className="text-[#29c3ec] underline">marketing@molibso.com</a></p>
-          <p>Wir freuen uns, auf Ihren Besuch!</p>
+          <p>vielen Dank für Ihre Anmeldung für eine Ganganalyse an unserem Stand auf der A+A Messe.</p>
+           <p>Wir freuen uns auf Ihren Besuch!</p>
           <p>Dynamische Grüße</p>
           <p>Ihr molibso-Team</p>
         </div>
