@@ -574,7 +574,7 @@ const Contact = () => {
                       {selectedAppointment ? ` - ${selectedAppointment}` : ""}
                     </p>
                     <p className="mt-2 text-md text-gray-700 dark:text-gray-300">
-                      Ort: Koelnmesse
+                      Ort: Düsseldorf
                     </p>
                   </div>
 
