@@ -27,7 +27,7 @@ const Contact = () => {
     email: "",
     birthday: "",
     company_name: "",
-    // Fragebogen (optional)
+    // Fragebogen
     job_activity: "",
     sport_activity: "",
     complaint_location: "",
@@ -175,7 +175,7 @@ const Contact = () => {
       // Create a copy of formData and exclude the specified fields for aplusa
       const { salutation, company_name, ...filteredFormData } = formData;
       
-      // Prepare data for both APIs
+      // Prepare main submission payload (includes questionnaire fields + captcha)
       const bunertData = { ...filteredFormData, captchaToken };
       
       // Map form data to match MongoDB schema
@@ -190,62 +190,107 @@ const Contact = () => {
         captchaToken: captchaToken
       };
       
-      // Send to both APIs simultaneously
-      const saveBookingUrl = process.env.NEXT_PUBLIC_SAVE_BOOKING;
-      
-      const apiPromises = [
-        fetch(apiUrl2, {
+      // 1) Send MAIN submission first
+      const mainResponse = await fetch(apiUrl2, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
+        },
+        body: JSON.stringify(bunertData),
+      });
+
+      if (!mainResponse.ok) {
+        console.error("MAIN API: Failed", mainResponse.status);
+        alert("Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.");
+        return;
+      }
+
+      const mainJson = await mainResponse.json();
+      if (!mainJson || mainJson.status !== 1 || !mainJson.data || !mainJson.data.id) {
+        console.error("MAIN API: Unexpected response format", mainJson);
+        alert("Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.");
+        return;
+      }
+
+      const customerId = mainJson.data.id;
+
+      // 2) Send QUESTIONNAIRE to BASE_URL/{id}/online-questionnaire
+      try {
+        const questionnaireUrl = `${process.env.NEXT_PUBLIC_BASE_URL_QUESTIONNAIRE}/${customerId}/online-questionnaire?s=${process.env.NEXT_PUBLIC_SYSTEM_TOKEN}`;
+
+        const questionnairePayload = {
+          online_general_data: {
+            birthday: formData.birthday || "",
+            body_height: "",
+            body_weight: "",
+            professional_activity: formData.job_activity || "",
+            sports_activity: formData.sport_activity || "",
+          },
+          online_complaints: {
+            localized_complaints: formData.complaint_location ? [formData.complaint_location] : [],
+            dependence_on_exertion: formData.complaint_dependency ? [formData.complaint_dependency] : [],
+            pain_intensity: formData.pain_scale || "",
+          },
+          online_shoe_habits: {
+            frequently_worn_shoes: formData.usual_shoes || "",
+            change_shoes_often: formData.shoe_change_frequency || "",
+            use_special_shoes: formData.special_sport_shoes || "",
+          },
+          online_hilfsmittel: {
+            has_insoles: formData.insoles_current || "",
+            have_worn_insoles: formData.insoles_past || "",
+            insoles_satisfaction: formData.insoles_satisfaction || "",
+            have_used_other_aids: formData.other_aids || "",
+            orthotics_bandages: "",
+          },
+          online_pre_existing_conditions: {
+            diabetes_mellitus: formData.diabetes || "",
+            rheumatism: formData.rheuma_arthritis === "ja",
+            neurological_diseases: formData.neuro_diseases === "ja",
+            surgery_to_the_leg: formData.foot_leg_operations === "ja",
+            other_diseases: formData.other_conditions || "",
+          },
+        };
+
+        const questionnaireRes = await fetch(questionnaireUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
           },
-          body: JSON.stringify(bunertData),
-        })
-      ];
+          body: JSON.stringify(questionnairePayload),
+        });
 
-      // Only add SAVE_BOOKING API call if URL is defined
+        if (!questionnaireRes.ok) {
+          console.error("QUESTIONNAIRE API: Failed", questionnaireRes.status);
+        }
+      } catch (qe) {
+        console.error("QUESTIONNAIRE API: Error", qe);
+      }
+
+      // 3) Optionally send SAVE_BOOKING in background
+      const saveBookingUrl = process.env.NEXT_PUBLIC_SAVE_BOOKING;
       if (saveBookingUrl) {
-        apiPromises.push(
-          fetch(saveBookingUrl, {
+        try {
+          const saveRes = await fetch(saveBookingUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
             },
             body: JSON.stringify(saveBookingData),
-          })
-        );
-      }
-
-      const responses = await Promise.allSettled(apiPromises);
-      const [bunertResponse, saveBookingResponse] = responses;
-
-      // Check BUNERT response
-      if (bunertResponse.status === 'fulfilled' && bunertResponse.value.ok) {
-        console.log("BUNERT API: Success");
-      } else {
-        console.error("BUNERT API: Failed", bunertResponse.status === 'rejected' ? bunertResponse.reason : bunertResponse.value.status);
-      }
-
-      // Check SAVE_BOOKING response (only if it was called)
-      if (saveBookingUrl) {
-        if (saveBookingResponse.status === 'fulfilled' && saveBookingResponse.value.ok) {
-          console.log("SAVE_BOOKING API: Success");
-        } else {
-          console.error("SAVE_BOOKING API: Failed", saveBookingResponse.status === 'rejected' ? saveBookingResponse.reason : saveBookingResponse.value.status);
+          });
+          if (!saveRes.ok) {
+            console.error("SAVE_BOOKING API: Failed", saveRes.status);
+          }
+        } catch (se) {
+          console.error("SAVE_BOOKING API: Error", se);
         }
       }
 
-      // Show success modal if at least one API succeeded
-      const bunertSuccess = bunertResponse.status === 'fulfilled' && bunertResponse.value.ok;
-      const saveBookingSuccess = saveBookingUrl ? (saveBookingResponse.status === 'fulfilled' && saveBookingResponse.value.ok) : true;
-      
-      if (bunertSuccess || saveBookingSuccess) {
-        setIsModalOpen(true);
-      } else {
-        alert("Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.");
-      }
+      // Show success regardless of questionnaire/save_booking outcome once main succeeded
+      setIsModalOpen(true);
     } catch (error) {
       console.error("Error submitting form:", error);
       alert("An error occurred. Please try again.");
