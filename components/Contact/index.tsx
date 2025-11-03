@@ -27,11 +27,39 @@ const Contact = () => {
     email: "",
     birthday: "",
     company_name: "",
+    // Fragebogen (optional)
+    job_activity: "",
+    sport_activity: "",
+    complaint_location: "",
+    complaint_dependency: "",
+    pain_scale: "",
+    usual_shoes: "",
+    shoe_change_frequency: "",
+    special_sport_shoes: "",
+    insoles_current: "",
+    insoles_past: "",
+    insoles_satisfaction: "",
+    other_aids: "",
+    diabetes: "",
+    rheuma_arthritis: "",
+    neuro_diseases: "",
+    foot_leg_operations: "",
+    other_conditions: "",
   });
 
   const [captchaToken, setCaptchaToken] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [step, setStep] = useState(1);
+  const [expandedSections, setExpandedSections] = useState({
+    activity: true,
+    complaints: false,
+    shoes: false,
+    aids: false,
+    conditions: false,
+  });
+  const toggleSection = (section) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
   const eventDate1Str = process.env.NEXT_PUBLIC_EVENT_DATE_1 || "2025-11-04";
   const eventDate2Str = process.env.NEXT_PUBLIC_EVENT_DATE_2 || "2025-11-05";
   const eventDate3Str = process.env.NEXT_PUBLIC_EVENT_DATE_3 || "2025-11-06";
@@ -116,7 +144,7 @@ const Contact = () => {
   };
 
   const nextStep = () => {
-    if (step < 3) setStep(step + 1);
+    if (step < 4) setStep(step + 1);
   };
 
   const prevStep = () => {
@@ -235,6 +263,23 @@ const Contact = () => {
       email: "",
       birthday: "",
       company_name: "",
+      job_activity: "",
+      sport_activity: "",
+      complaint_location: "",
+      complaint_dependency: "",
+      pain_scale: "",
+      usual_shoes: "",
+      shoe_change_frequency: "",
+      special_sport_shoes: "",
+      insoles_current: "",
+      insoles_past: "",
+      insoles_satisfaction: "",
+      other_aids: "",
+      diabetes: "",
+      rheuma_arthritis: "",
+      neuro_diseases: "",
+      foot_leg_operations: "",
+      other_conditions: "",
     });
     setCheckbox1(false);
     setCheckbox2(false);
@@ -566,6 +611,279 @@ const Contact = () => {
               )}
 
               {step === 3 && (
+                <form onSubmit={(e) => { e.preventDefault(); nextStep(); }}>
+                  <h3 className="mb-6 text-xl font-semibold text-black dark:text-white">Fragebogen (optional)</h3>
+
+                  {/* Allgemeine Aktivität */}
+                  <div className="mb-7.5 rounded-lg border border-stroke dark:border-strokedark">
+                    <button
+                      type="button"
+                      onClick={() => toggleSection('activity')}
+                      className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <h4 className="text-lg font-semibold text-black dark:text-white">
+                        Allgemeine Aktivität
+                      </h4>
+                      <svg
+                        className={`w-5 h-5 transform transition-transform ${expandedSections.activity ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {expandedSections.activity && (
+                      <div className="px-6 pb-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Berufliche Tätigkeit
+                            </label>
+                            <select name="job_activity" value={formData.job_activity} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="stehend">Stehend</option>
+                              <option value="gehend">Gehend</option>
+                              <option value="sitzend">Sitzend</option>
+                              <option value="wechselnd">Wechselnd</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Sportliche Aktivität
+                            </label>
+                            <select name="sport_activity" value={formData.sport_activity} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="keine">Keine</option>
+                              <option value="freizeit">Freizeit</option>
+                              <option value="leistungssport">Leistungssport</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Beschwerden */}
+                  <div className="mb-7.5 rounded-lg border border-stroke dark:border-strokedark">
+                    <button
+                      type="button"
+                      onClick={() => toggleSection('complaints')}
+                      className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      <h4 className="text-lg font-semibold text-black dark:text-white">Beschwerden</h4>
+                      <svg className={`w-5 h-5 transform transition-transform ${expandedSections.complaints ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {expandedSections.complaints && (
+                      <div className="px-6 pb-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Beschwerden lokalisiert
+                            </label>
+                            <select name="complaint_location" value={formData.complaint_location} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="vorfuss">Vorfuß</option>
+                              <option value="ferse">Ferse</option>
+                              <option value="mittelfuss">Mittelfuß</option>
+                              <option value="sprunggelenk">Sprunggelenk</option>
+                              <option value="knie">Knie</option>
+                              <option value="huefte">Hüfte</option>
+                              <option value="ruecken">Rücken</option>
+                              <option value="keine">Keine</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Belastungsabhängigkeit
+                            </label>
+                            <select name="complaint_dependency" value={formData.complaint_dependency} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="gehen">Beim Gehen</option>
+                              <option value="stehen">Beim Stehen</option>
+                              <option value="sport">Beim Sport</option>
+                              <option value="ruhe">In Ruhe</option>
+                              <option value="keine">Keine</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col lg:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Schmerzausprägung (Skala 1-10)
+                            </label>
+                            <input type="number" min="1" max="10" name="pain_scale" value={formData.pain_scale} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Schuhgewohnheiten */}
+                  <div className="mb-7.5 rounded-lg border border-stroke dark:border-strokedark">
+                    <button type="button" onClick={() => toggleSection('shoes')} className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <h4 className="text-lg font-semibold text-black dark:text-white">Schuhgewohnheiten</h4>
+                      <svg className={`w-5 h-5 transform transition-transform ${expandedSections.shoes ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {expandedSections.shoes && (
+                      <div className="px-6 pb-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Häufig getragene Schuhe
+                            </label>
+                            <select name="usual_shoes" value={formData.usual_shoes} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="sneaker">Sneaker</option>
+                              <option value="sicherheitsschuhe">Sicherheitsschuhe</option>
+                              <option value="arbeitsschuhe">Arbeitsschuhe</option>
+                              <option value="elegant">Elegante Schuhe</option>
+                              <option value="sandalen">Sandalen</option>
+                              <option value="sportschuhe">Sportschuhe</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Schuhwechsel im Alltag
+                            </label>
+                            <select name="shoe_change_frequency" value={formData.shoe_change_frequency} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="selten">Selten</option>
+                              <option value="haeufig">Häufig</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col lg:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Nutzung spezieller Sportschuhe
+                            </label>
+                            <select name="special_sport_shoes" value={formData.special_sport_shoes} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="ja">Ja</option>
+                              <option value="nein">Nein</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Hilfsmittel */}
+                  <div className="mb-7.5 rounded-lg border border-stroke dark:border-strokedark">
+                    <button type="button" onClick={() => toggleSection('aids')} className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <h4 className="text-lg font-semibold text-black dark:text-white">Hilfsmittel</h4>
+                      <svg className={`w-5 h-5 transform transition-transform ${expandedSections.aids ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {expandedSections.aids && (
+                      <div className="px-6 pb-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Aktuelle Einlagenversorgung vorhanden?
+                            </label>
+                            <select name="insoles_current" value={formData.insoles_current} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="ja">Ja</option>
+                              <option value="nein">Nein</option>
+                              <option value="weiss_nicht">Weiß nicht</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Frühere Einlagen getragen?
+                            </label>
+                            <select name="insoles_past" value={formData.insoles_past} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="ja">Ja</option>
+                              <option value="nein">Nein</option>
+                              <option value="weiss_nicht">Weiß nicht</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Zufriedenheit mit bisherigen Einlagen
+                            </label>
+                            <select name="insoles_satisfaction" value={formData.insoles_satisfaction} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="sehr_zufrieden">Sehr zufrieden</option>
+                              <option value="teilweise">Teilweise</option>
+                              <option value="unzufrieden">Unzufrieden</option>
+                              <option value="keine_angabe">Keine Angabe</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">
+                              Andere Hilfsmittel genutzt (Bandagen/Orthesen)?
+                            </label>
+                            <select name="other_aids" value={formData.other_aids} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="ja">Ja</option>
+                              <option value="nein">Nein</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Vorerkrankungen */}
+                  <div className="mb-7.5 rounded-lg border border-stroke dark:border-strokedark">
+                    <button type="button" onClick={() => toggleSection('conditions')} className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                      <h4 className="text-lg font-semibold text-black dark:text-white">Vorerkrankungen</h4>
+                      <svg className={`w-5 h-5 transform transition-transform ${expandedSections.conditions ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    {expandedSections.conditions && (
+                      <div className="px-6 pb-6">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">Diabetes mellitus</label>
+                            <select name="diabetes" value={formData.diabetes} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="typ1">Typ 1</option>
+                              <option value="typ2">Typ 2</option>
+                              <option value="nein">Nein</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">Rheuma / Arthritis</label>
+                            <select name="rheuma_arthritis" value={formData.rheuma_arthritis} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="ja">Ja</option>
+                              <option value="nein">Nein</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">Neurologische Erkrankungen</label>
+                            <select name="neuro_diseases" value={formData.neuro_diseases} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="ja">Ja</option>
+                              <option value="nein">Nein</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">Operationen / Verletzungen am Fuß oder Bein</label>
+                            <select name="foot_leg_operations" value={formData.foot_leg_operations} onChange={handleInputChange} className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none">
+                              <option value="">Bitte wählen</option>
+                              <option value="ja">Ja</option>
+                              <option value="nein">Nein</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col lg:col-span-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-white mb-2">Sonstige relevante Erkrankungen</label>
+                            <input type="text" name="other_conditions" value={formData.other_conditions} onChange={handleInputChange} placeholder="Beschreibung" className="w-full px-3 py-3 border border-stroke rounded-lg bg-transparent focus:outline-none" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <button type="button" onClick={prevStep} style={{ backgroundColor: "#29c3ec" }} className="inline-flex items-center gap-2.5 rounded-full px-6 py-3 font-medium text-white">Zurück</button>
+                    <button type="submit" style={{ backgroundColor: "#29c3ec" }} className="inline-flex items-center gap-2.5 rounded-full px-6 py-3 font-medium text-white">Weiter</button>
+                  </div>
+                </form>
+              )}
+
+              {step === 4 && (
                 <form onSubmit={handleSubmit}>
                   <div className="mb-6 rounded-lg border bg-gray-100 p-6 text-center dark:bg-gray-800">
                     <h4 className="mb-2 text-xl font-semibold text-black dark:text-white">Ausgewählter Termin:</h4>
